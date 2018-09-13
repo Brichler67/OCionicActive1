@@ -1,24 +1,40 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Library } from './../../models/Library';
+import { Component, OnInit } from '@angular/core';
+import { NavParams, NavController, ToastController } from 'ionic-angular';
+import { BookCdServices } from '../../services/library.service';
 
-/**
- * Generated class for the LendBookPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @Component({
   selector: 'page-lend-book',
   templateUrl: 'lend-book.html',
 })
-export class LendBookPage {
+export class LendBookPage implements OnInit {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  name: string;
+  index: number;
+  book: Library;
+
+  constructor(public navParams: NavParams, public navCtrl: NavController, public bookService: BookCdServices, public toastCtrl: ToastController) { }
+
+  ngOnInit() {
+    this.index = this.navParams.get('index');
+    this.book = this.bookService.bookList[this.index]
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LendBookPage');
+  close() {
+    this.navCtrl.pop();
+  }
+
+  onToggleAppareil(position: string) {
+    this.book.isLend = !this.book.isLend;
+    let bookLend = this.book.isLend === true ? 'emprunté' : 'rendu'
+    let toast = this.toastCtrl.create({
+      message: `Le livre est ${bookLend}`,
+      duration: 2000,
+      position: position
+    });
+
+    toast.present(toast);
   }
 
 }

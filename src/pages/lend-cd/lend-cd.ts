@@ -1,12 +1,7 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the LendCdPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { Library } from './../../models/Library';
+import { Component, OnInit } from '@angular/core';
+import { NavParams, NavController, ToastController } from 'ionic-angular';
+import { BookCdServices } from '../../services/library.service';
 
 @Component({
   selector: 'page-lend-cd',
@@ -14,11 +9,31 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class LendCdPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  name: string;
+  index: number;
+  cd: Library;
+
+  constructor(public navParams: NavParams, public navCtrl: NavController, public cdService: BookCdServices, public toastCtrl: ToastController) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LendCdPage');
+  ngOnInit() {
+    this.index = this.navParams.get('index');
+    this.cd = this.cdService.cdList[this.index]
   }
 
+  close() {
+    this.navCtrl.pop();
+  }
+
+  onToggleAppareil(position: string) {
+    this.cd.isLend = !this.cd.isLend;
+    let cdLend = this.cd.isLend === true ? 'emprunté' : 'rendu'
+    let toast = this.toastCtrl.create({
+      message: `Le CD est ${cdLend}`,
+      duration: 2000,
+      position: position,
+    });
+
+    toast.present(toast);
+  }
 }
